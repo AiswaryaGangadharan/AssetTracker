@@ -1,0 +1,57 @@
+
+
+
+
+
+ASSETTRACKER – FEATURE LIST
+
+
+ What I understood from the client
+The client wants a software system to manage company assets.
+The main idea is to know which company item is currently with which employee.
+This will help the company avoid confusion and keep track of assets properly instead of using manual methods.
+
+
+ Creative choices I made
+- I named the product as “AssetTracker”.
+- The system will be a simple web application.
+- The project focuses on tracking assets.
+- Assets are grouped into simple categories like laptops, mobiles, and other accessories.
+
+
+ Assumptions made
+- One asset can be given to only one employee at a time.
+- Only admin or authorized staff can add or assign assets.
+- Employees cannot change asset details.
+
+
+ Features planned
+
+1. Employee Details  
+   The system will store employee information such as name, employee ID, and department.
+
+2. Asset Details  
+   The system will store details of company assets like asset name, type, and status.
+
+3. Asset Assignment  
+   Assets can be assigned to employees and the assignment date will be stored.
+
+4. Asset Status  
+   Each asset will show whether it is available, assigned, or under maintenance.
+
+5. Asset History  
+   Previous asset assignments can be viewed for reference.
+
+6. Search Option  
+   Users can search for assets or employees easily.
+
+7. Basic Dashboard  
+   A simple dashboard to show total assets and assigned assets.
+
+
+ Questions for the next client meeting
+1. Do you want different user roles like admin and employee?
+2. Should employees be able to see the assets assigned to them?
+3. Do you need notifications when assets are assigned or returned?
+4. Is mobile access required?
+5. Do you want the option to upload data in bulk?
