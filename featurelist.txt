@@ -53,5 +53,5 @@ This will help the company avoid confusion and keep track of assets properly ins
 1. Do you want different user roles like admin and employee?
 2. Should employees be able to see the assets assigned to them?
 3. Do you need notifications when assets are assigned or returned?
-4. Is mobile access required?
-5. Do you want the option to upload data in bulk?
+4. Do you need employees be able to request assets or to be handled by admins?
+5. Do you want a history of asset allocation like who had the asset earlier and when it was returned?
