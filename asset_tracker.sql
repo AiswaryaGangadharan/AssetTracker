@@ -38,8 +38,8 @@ CREATE TABLE users (
 -- Dummy data for employees
 INSERT INTO employees (name, email, department, role)
 VALUES
-('Amit Kumar', 'amit@company.com', 'IT', 'employee'),
-('Sneha Rao', 'sneha@company.com', 'HR', 'admin');
+('Aiswarya Gangadharan', 'amit@company.com', 'IT', 'employee'),
+('Shalini ', 'sneha@company.com', 'HR', 'admin');
 
 -- Dummy data for assets
 INSERT INTO assets (asset_name, asset_type, asset_tag, status)
