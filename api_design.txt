@@ -1,0 +1,83 @@
+Feature: Add a new employee
+API Endpoint: POST /api/employees
+Database Action: INSERT a new row into employees table (name, employee_id, department)
+
+Feature: View all employees
+API Endpoint: GET /api/employees
+Database Action: SELECT all rows from employees table
+
+Feature: View single employee
+API Endpoint: GET /api/employees/{id}
+Database Action: SELECT row from employees table WHERE id = ?
+
+Feature: Update employee details
+API Endpoint: PUT /api/employees/{id}
+Database Action: UPDATE employees table SET name, employee_id, department WHERE id = ?
+
+Feature: Delete employee
+API Endpoint: DELETE /api/employees/{id}
+Database Action: DELETE row FROM employees table WHERE id = ?
+
+ASSET FEATURES
+Feature: Add new asset
+API Endpoint: POST /api/assets
+Database Action: INSERT new row into assets table (asset_name, type, status)
+
+Feature: View all assets
+API Endpoint: GET /api/assets
+Database Action: SELECT all rows FROM assets table
+
+Feature: View single asset
+API Endpoint: GET /api/assets/{id}
+Database Action: SELECT row FROM assets table WHERE id = ?
+
+Feature: Update asset details
+API Endpoint: PUT /api/assets/{id}
+Database Action: UPDATE assets table SET asset_name, type, status WHERE id = ?
+
+Feature: Delete asset
+API Endpoint: DELETE /api/assets/{id}
+Database Action: DELETE row FROM assets table WHERE id = ?
+
+Feature: Change asset status
+API Endpoint: PATCH /api/assets/{id}/status
+Database Action: UPDATE assets table SET status = ? WHERE id = ?
+
+ASSET ASSIGNMENT FEATURES
+Feature: Assign asset to employee
+API Endpoint: POST /api/assignments
+Database Action:
+
+INSERT into assignments table (employee_id, asset_id, assigned_date)
+UPDATE assets table SET status = 'Assigned'
+Feature: Return asset
+API Endpoint: PUT /api/assignments/{id}/return
+Database Action:
+
+UPDATE assignments table SET return_date = ?
+UPDATE assets table SET status = 'Available'
+Feature: View assignment history
+API Endpoint: GET /api/assignments
+Database Action: SELECT all rows FROM assignments table
+
+SEARCH FEATURES
+Feature: Search employee
+API Endpoint: GET /api/employees?search=keyword
+Database Action: SELECT rows FROM employees WHERE name LIKE '%keyword%'
+
+Feature: Search asset
+API Endpoint: GET /api/assets?search=keyword
+Database Action: SELECT rows FROM assets WHERE asset_name LIKE '%keyword%'
+
+DASHBOARD FEATURES
+Feature: Get total assets
+API Endpoint: GET /api/dashboard/total-assets
+Database Action: SELECT COUNT(*) FROM assets table
+
+Feature: Get assigned assets count
+API Endpoint: GET /api/dashboard/assigned-assets
+Database Action: SELECT COUNT(*) FROM assets WHERE status = 'Assigned'
+
+Feature: Get available assets count
+API Endpoint: GET /api/dashboard/available-assets
+Database Action: SELECT COUNT(*) FROM assets WHERE status = 'Available'
