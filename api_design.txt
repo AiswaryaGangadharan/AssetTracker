@@ -1,83 +1,209 @@
+# ==============================
+# EMPLOYEE FEATURES
+# ==============================
+
 Feature: Add a new employee
 API Endpoint: POST /api/employees
-Database Action: INSERT a new row into employees table (name, employee_id, department)
+Request Body:
+  - name: str
+  - employee_id: str
+  - department: str
+Response:
+  - id: int
+  - name: str
+  - employee_id: str
+  - department: str
+Status Code: 201 Created
 
 Feature: View all employees
 API Endpoint: GET /api/employees
-Database Action: SELECT all rows from employees table
+Response:
+  - List of employees:
+      - id: int
+      - name: str
+      - employee_id: str
+      - department: str
+Status Code: 200 OK
 
 Feature: View single employee
 API Endpoint: GET /api/employees/{id}
-Database Action: SELECT row from employees table WHERE id = ?
+Response:
+  - id: int
+  - name: str
+  - employee_id: str
+  - department: str
+Status Code: 200 OK
 
 Feature: Update employee details
 API Endpoint: PUT /api/employees/{id}
-Database Action: UPDATE employees table SET name, employee_id, department WHERE id = ?
+Request Body:
+  - name: str
+  - employee_id: str
+  - department: str
+Response:
+  - id: int
+  - name: str
+  - employee_id: str
+  - department: str
+Status Code: 200 OK
 
 Feature: Delete employee
 API Endpoint: DELETE /api/employees/{id}
-Database Action: DELETE row FROM employees table WHERE id = ?
+Response:
+  - message: "Deleted successfully"
+Status Code: 200 OK
 
-ASSET FEATURES
+# ==============================
+# ASSET FEATURES
+# ==============================
+
 Feature: Add new asset
 API Endpoint: POST /api/assets
-Database Action: INSERT new row into assets table (asset_name, type, status)
+Request Body:
+  - asset_name: str
+  - type: str
+  - status: str
+Response:
+  - id: int
+  - asset_name: str
+  - type: str
+  - status: str
+Status Code: 201 Created
 
 Feature: View all assets
 API Endpoint: GET /api/assets
-Database Action: SELECT all rows FROM assets table
+Response:
+  - List of assets:
+      - id: int
+      - asset_name: str
+      - type: str
+      - status: str
+Status Code: 200 OK
 
 Feature: View single asset
 API Endpoint: GET /api/assets/{id}
-Database Action: SELECT row FROM assets table WHERE id = ?
+Response:
+  - id: int
+  - asset_name: str
+  - type: str
+  - status: str
+Status Code: 200 OK
 
 Feature: Update asset details
 API Endpoint: PUT /api/assets/{id}
-Database Action: UPDATE assets table SET asset_name, type, status WHERE id = ?
+Request Body:
+  - asset_name: str
+  - type: str
+  - status: str
+Response:
+  - id: int
+  - asset_name: str
+  - type: str
+  - status: str
+Status Code: 200 OK
 
 Feature: Delete asset
 API Endpoint: DELETE /api/assets/{id}
-Database Action: DELETE row FROM assets table WHERE id = ?
+Response:
+  - message: "Deleted successfully"
+Status Code: 200 OK
 
 Feature: Change asset status
 API Endpoint: PATCH /api/assets/{id}/status
-Database Action: UPDATE assets table SET status = ? WHERE id = ?
+Request Body:
+  - status: str
+Response:
+  - id: int
+  - asset_name: str
+  - type: str
+  - status: str
+Status Code: 200 OK
 
-ASSET ASSIGNMENT FEATURES
+# ==============================
+# ASSET ASSIGNMENT FEATURES
+# ==============================
+
 Feature: Assign asset to employee
 API Endpoint: POST /api/assignments
-Database Action:
+Request Body:
+  - employee_id: int
+  - asset_id: int
+Response:
+  - id: int
+  - employee_id: int
+  - asset_id: int
+  - assigned_date: datetime
+Status Code: 201 Created
 
-INSERT into assignments table (employee_id, asset_id, assigned_date)
-UPDATE assets table SET status = 'Assigned'
 Feature: Return asset
 API Endpoint: PUT /api/assignments/{id}/return
-Database Action:
+Request Body:
+  - return_date: datetime
+Response:
+  - id: int
+  - employee_id: int
+  - asset_id: int
+  - assigned_date: datetime
+  - return_date: datetime
+Status Code: 200 OK
 
-UPDATE assignments table SET return_date = ?
-UPDATE assets table SET status = 'Available'
 Feature: View assignment history
 API Endpoint: GET /api/assignments
-Database Action: SELECT all rows FROM assignments table
+Response:
+  - List of assignments:
+      - id: int
+      - employee_id: int
+      - asset_id: int
+      - assigned_date: datetime
+      - return_date: datetime
+Status Code: 200 OK
 
-SEARCH FEATURES
+# ==============================
+# SEARCH FEATURES
+# ==============================
+
 Feature: Search employee
 API Endpoint: GET /api/employees?search=keyword
-Database Action: SELECT rows FROM employees WHERE name LIKE '%keyword%'
+Query Parameter:
+  - search: str (optional)
+Response:
+  - List of employees matching keyword:
+      - id: int
+      - name: str
+      - employee_id: str
+      - department: str
+Status Code: 200 OK
 
 Feature: Search asset
 API Endpoint: GET /api/assets?search=keyword
-Database Action: SELECT rows FROM assets WHERE asset_name LIKE '%keyword%'
+Query Parameter:
+  - search: str (optional)
+Response:
+  - List of assets matching keyword:
+      - id: int
+      - asset_name: str
+      - type: str
+      - status: str
+Status Code: 200 OK
 
-DASHBOARD FEATURES
+# ==============================
+# DASHBOARD FEATURES
+# ==============================
+
 Feature: Get total assets
 API Endpoint: GET /api/dashboard/total-assets
-Database Action: SELECT COUNT(*) FROM assets table
+Response:
+  - total_assets: int
+Status Code: 200 OK
 
 Feature: Get assigned assets count
 API Endpoint: GET /api/dashboard/assigned-assets
-Database Action: SELECT COUNT(*) FROM assets WHERE status = 'Assigned'
+Response:
+  - assigned_assets: int
+Status Code: 200 OK
 
 Feature: Get available assets count
 API Endpoint: GET /api/dashboard/available-assets
-Database Action: SELECT COUNT(*) FROM assets WHERE status = 'Available'
+Response:
+  - available_assets: int
+Status Code: 200 OK
