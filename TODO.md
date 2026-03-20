@@ -1,0 +1,1 @@
+- [x] Step 1: Fix assettracker-backend/main.py (add import jwt + SECRET_KEY)\n- [x] Step 2: Create requirements.txt + Install deps\n\n

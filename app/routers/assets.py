@@ -1,12 +1,17 @@
-from fastapi import APIRouter
-from app.security import RequirePrivilege
+from fastapi import HTTPException, Depends, status
 
-router = APIRouter()
+# 1. This is the Gatekeeper function
+def require_admin_role(current_user: dict):
+    # This assumes your user object has a 'role' field
+    if current_user.get("role") != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to do this!"
+        )
+    return True
 
-@router.post("/")
-def create_asset(permission = RequirePrivilege("create:asset")):
-    return {"message": "Asset created"}
-
-@router.delete("/{asset_id}")
-def delete_asset(asset_id: int, permission = RequirePrivilege("delete:asset")):
-    return {"message": f"Asset {asset_id} deleted"}
+# 2. This is how you use it on your DELETE route
+@app.delete("/assets/{id}")
+def delete_asset(id: int, admin_check=Depends(require_admin_role)):
+    # The code below only runs if require_admin_role says "Yes"
+    return {"message": "Asset deleted successfully"}
