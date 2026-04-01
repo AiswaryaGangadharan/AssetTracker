@@ -1,0 +1,35 @@
+
+from fastapi import Depends, HTTPException, status, Header
+
+ROLE_PERMISSIONS = {
+    "admin": [
+        "view:employees",
+        "delete:asset",
+        "add:asset",
+        "view:inventory",
+        "view:my_assets"
+    ],
+    "employee": [
+        "view:my_assets"
+    ]
+}
+
+def get_current_user(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid token")
+    token = authorization.split(" ")[1]
+    role = "admin" if "admin" in token.lower() else "employee"
+    user_id = 1 if role == "employee" else 0
+    return {"role": role, "id": user_id, "username": f"{role}_user"}
+
+def RequirePrivilege(permission: str):
+    def check_permission(current_user: dict = Depends(get_current_user)):
+        role = current_user.get("role")
+        if permission not in ROLE_PERMISSIONS.get(role, []):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission"
+            )
+        return True
+    return Depends(check_permission)
+

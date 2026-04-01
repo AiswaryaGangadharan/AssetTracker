@@ -1,0 +1,56 @@
+INFO:     Started server process [14294]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:52598 - "OPTIONS /api/auth/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52617 - "OPTIONS /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52617 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52628 - "OPTIONS /api/api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52629 - "OPTIONS /api/api/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52628 - "GET /api/api/assets HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52630 - "GET /api/api/dashboard HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52628 - "GET /api/api/assets HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52630 - "GET /api/api/dashboard HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52681 - "GET /api/api/assets HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52682 - "GET /api/api/dashboard HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52725 - "OPTIONS /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52726 - "OPTIONS /api/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52725 - "GET /api/assets HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52727 - "GET /api/dashboard HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52747 - "OPTIONS /api/auth/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52772 - "OPTIONS /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52772 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52772 - "GET /api/assets HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52773 - "GET /api/dashboard HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52772 - "GET /api/assets HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52773 - "GET /api/dashboard HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52856 - "GET /api/assets HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52857 - "GET /api/dashboard HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52912 - "GET /api/assets HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52913 - "GET /api/dashboard HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52913 - "GET /api/assets HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52912 - "GET /api/dashboard HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52927 - "OPTIONS /api/auth/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52935 - "OPTIONS /api/auth/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52967 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52967 - "GET /api/assets HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52974 - "GET /api/dashboard HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52967 - "GET /api/dashboard HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52975 - "GET /api/assets HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:53029 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53029 - "OPTIONS /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53036 - "OPTIONS /api/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53029 - "GET /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53037 - "OPTIONS /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53038 - "OPTIONS /api/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53029 - "GET /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53039 - "GET /api/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53039 - "GET /api/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53276 - "OPTIONS /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53277 - "OPTIONS /api/dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53276 - "GET /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53278 - "GET /api/dashboard HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [14294]
