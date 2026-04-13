@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from routers import auth
-from app.routers.employees import router as employees
-from app.routers.assets import router as assets
-from app.routers.assignments import router as assignments
-from app.routers.dashboard import router as dashboard
-from app.routers.search import router as search
+from routers.employees import router as employees
+from routers.assets import router as assets
+from routers.assignments import router as assignments
+from routers.dashboard import router as dashboard
+from routers.search import router as search
 app = FastAPI(title="Asset Tracker API")
 
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])

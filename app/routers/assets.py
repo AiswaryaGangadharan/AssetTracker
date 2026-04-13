@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
-from app.schemas.schemas import AssetOut
-from app.security import RequirePrivilege, get_current_user
+from schemas.schemas import AssetOut
+from security import RequirePrivilege, get_current_user
 
 router = APIRouter(prefix="/assets", tags=["Assets"])
 
