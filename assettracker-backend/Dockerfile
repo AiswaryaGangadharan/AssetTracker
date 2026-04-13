@@ -1,12 +1,9 @@
-FROM python:3.11-slim
+FROM python:3.10
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir pydantic-settings sqlalchemy psycopg2-binary
+COPY ./app /app
 
-COPY ./app ./app
+RUN pip install --no-cache-dir fastapi uvicorn
 
-# Use the PORT environment variable provided by Render, fallback to 8000
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
