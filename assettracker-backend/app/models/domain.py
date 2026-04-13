@@ -8,7 +8,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    name = Column(String)
+    username = Column(String, unique=True, index=True)
     role = Column(String, default="employee")
     initials = Column(String)
     department = Column(String, nullable=True)

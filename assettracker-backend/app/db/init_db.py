@@ -24,7 +24,7 @@ def init_db():
                 # Create Demo Admin
                 admin = User(
                     email="admin@company.com",
-                    name="Admin User",
+                    username="admin",
                     role="admin",
                     initials="AD",
                     department="IT Operations",
@@ -35,7 +35,7 @@ def init_db():
                 # Create Demo Employee
                 employee = User(
                     email="amit@company.com",
-                    name="Amit Singh",
+                    username="amit_singh",
                     role="employee",
                     initials="AS",
                     department="Engineering",

@@ -7,12 +7,13 @@ class Token(BaseModel):
     user: dict
 
 class LoginRequest(BaseModel):
-    email: str
+    email: str = None
+    username: str = None
     password: str
 
 class RegisterRequest(BaseModel):
     email: str
+    username: str
     password: str
-    name: str
     initials: Optional[str] = None
     department: Optional[str] = None

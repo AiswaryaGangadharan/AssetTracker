@@ -12,14 +12,14 @@ router = APIRouter()
 
 @router.post("/register", response_model=Token)
 async def register(request: RegisterRequest, db: Session = Depends(get_db)):
-    if db.query(User).filter(User.email == request.email).first():
-        raise HTTPException(status_code=400, detail="Email already registered")
+    if db.query(User).filter((User.email == request.email) | (User.username == request.username)).first():
+        raise HTTPException(status_code=400, detail="Username or email already registered")
         
-    initials = request.initials or "".join([p[0].upper() for p in request.name.split() if p])[:2]
+    initials = request.initials or "".join([p[0].upper() for p in request.username.split() if p])[:2]
     
     user = User(
         email=request.email,
-        name=request.name,
+        username=request.username,
         password_hash=get_password_hash(request.password),
         role="employee",
         initials=initials,
@@ -46,7 +46,7 @@ async def register(request: RegisterRequest, db: Session = Depends(get_db)):
         "user": {
             "id": user.id,
             "email": user.email,
-            "name": user.name,
+            "name": user.username,  # map username to name so frontend doesn't break
             "role": user.role,
             "initials": user.initials,
         }
@@ -54,9 +54,17 @@ async def register(request: RegisterRequest, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 async def login(request: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == request.email).first()
+    if not request.email and not request.username:
+        raise HTTPException(status_code=400, detail="Must provide email or username")
+        
+    user = None
+    if request.email:
+        user = db.query(User).filter(User.email == request.email).first()
+    if not user and request.username:
+        user = db.query(User).filter(User.username == request.username).first()
+        
     if not user or not verify_password(request.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+        raise HTTPException(status_code=401, detail="Invalid email/username or password")
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -75,7 +83,7 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
         "user": {
             "id": user.id,
             "email": user.email,
-            "name": user.name,
+            "name": user.username, # map username to name so frontend doesn't break
             "role": user.role,
             "initials": user.initials,
         }
