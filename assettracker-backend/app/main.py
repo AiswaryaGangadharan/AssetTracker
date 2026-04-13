@@ -6,17 +6,18 @@ from datetime import datetime
 from app.db.database import engine, Base
 from app.models import domain # Ensure models are imported to be registered with Base
 
+import asyncio
 from contextlib import asynccontextmanager
 from app.db.init_db import init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup logic: Initialize database and seed data
-    print("Starting up: Initializing database...")
-    init_db()
+    # Startup logic: Initialize database and seed data in the background
+    print(f"[{datetime.now().isoformat()}] INFO: Application starting up. Scheduling background initialization...")
+    asyncio.create_task(asyncio.to_thread(init_db))
     yield
     # Shutdown logic (if any)
-    print("Shutting down...")
+    print(f"[{datetime.now().isoformat()}] INFO: Application shutting down.")
 
 app = FastAPI(
     title=settings.PROJECT_NAME, 
@@ -34,6 +35,15 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix="/api")
+
+@app.get("/")
+async def root():
+    return {
+        "status": "running", 
+        "service": settings.PROJECT_NAME, 
+        "version": settings.VERSION,
+        "timestamp": datetime.utcnow()
+    }
 
 @app.get("/health")
 async def health_check():

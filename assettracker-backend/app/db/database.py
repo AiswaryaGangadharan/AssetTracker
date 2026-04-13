@@ -18,6 +18,7 @@ else:
         SQLALCHEMY_DATABASE_URL,
         pool_pre_ping=True,  # Checks connection validity before each request
         pool_recycle=3600,   # Recycle connections every hour
+        connect_args={"connect_timeout": 10}  # Prevent hanging on initial connect
     )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

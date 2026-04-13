@@ -8,89 +8,99 @@ import uuid
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def init_db():
-    # Create tables if they don't exist
-    Base.metadata.create_all(bind=engine)
+    print(f"[{datetime.now().isoformat()}] INFO: Starting database initialization...")
     
-    db = SessionLocal()
     try:
-        # Check if we already have users
-        user_count = db.query(User).count()
-        if user_count == 0:
-            print("Seeding database with demo data...")
-            
-            # Create Demo Admin
-            admin = User(
-                email="admin@company.com",
-                name="Admin User",
-                role="admin",
-                initials="AD",
-                department="IT Operations",
-                hashed_password=pwd_context.hash("admin123")
-            )
-            db.add(admin)
-            
-            # Create Demo Employee
-            employee = User(
-                email="amit@company.com",
-                name="Amit Singh",
-                role="employee",
-                initials="AS",
-                department="Engineering",
-                hashed_password=pwd_context.hash("employee123")
-            )
-            db.add(employee)
-            
-            db.commit()
-            db.refresh(admin)
-            db.refresh(employee)
-            
-            # Seed some initial assets
-            demo_assets = [
-                Asset(
-                    id="AST-001",
-                    name="MacBook Pro 16\"",
-                    type="Laptop",
-                    status="assigned",
-                    assigned_to=employee.id,
-                    date=date(2023, 5, 15),
-                    notes="Primary workstation for Amit."
-                ),
-                Asset(
-                    id="AST-002",
-                    name="Dell UltraSharp 27\"",
-                    type="Monitor",
-                    status="assigned",
-                    assigned_to=employee.id,
-                    date=date(2023, 6, 12),
-                    notes="Dual setup monitor."
-                ),
-                Asset(
-                    id="AST-003",
-                    name="iPad Pro 11\"",
-                    type="Tablet",
-                    status="available",
-                    date=date(2024, 1, 10),
-                    notes="Testing device."
-                ),
-                Asset(
-                    id="AST-004",
-                    name="Logitech MX Master 3",
-                    type="Peripheral",
-                    status="available",
-                    date=date(2023, 11, 20)
+        # Create tables if they don't exist
+        print(f"[{datetime.now().isoformat()}] INFO: Checking/Creating tables...")
+        Base.metadata.create_all(bind=engine)
+        print(f"[{datetime.now().isoformat()}] INFO: Tables verified.")
+        
+        db = SessionLocal()
+        try:
+            # Check if we already have users
+            user_count = db.query(User).count()
+            if user_count == 0:
+                print(f"[{datetime.now().isoformat()}] INFO: Database is empty. Seeding demo data...")
+                
+                # Create Demo Admin
+                admin = User(
+                    email="admin@company.com",
+                    name="Admin User",
+                    role="admin",
+                    initials="AD",
+                    department="IT Operations",
+                    hashed_password=pwd_context.hash("admin123")
                 )
-            ]
-            
-            for asset in demo_assets:
-                db.add(asset)
-            
-            db.commit()
-            print("Database seeded successfully.")
-        else:
-            print("Database already contains data, skipping seed.")
+                db.add(admin)
+                
+                # Create Demo Employee
+                employee = User(
+                    email="amit@company.com",
+                    name="Amit Singh",
+                    role="employee",
+                    initials="AS",
+                    department="Engineering",
+                    hashed_password=pwd_context.hash("employee123")
+                )
+                db.add(employee)
+                
+                db.commit()
+                db.refresh(admin)
+                db.refresh(employee)
+                
+                # Seed some initial assets
+                demo_assets = [
+                    Asset(
+                        id="AST-001",
+                        name="MacBook Pro 16\"",
+                        type="Laptop",
+                        status="assigned",
+                        assigned_to=employee.id,
+                        date=date(2023, 5, 15),
+                        notes="Primary workstation for Amit."
+                    ),
+                    Asset(
+                        id="AST-002",
+                        name="Dell UltraSharp 27\"",
+                        type="Monitor",
+                        status="assigned",
+                        assigned_to=employee.id,
+                        date=date(2023, 6, 12),
+                        notes="Dual setup monitor."
+                    ),
+                    Asset(
+                        id="AST-003",
+                        name="iPad Pro 11\"",
+                        type="Tablet",
+                        status="available",
+                        date=date(2024, 1, 10),
+                        notes="Testing device."
+                    ),
+                    Asset(
+                        id="AST-004",
+                        name="Logitech MX Master 3",
+                        type="Peripheral",
+                        status="available",
+                        date=date(2023, 11, 20)
+                    )
+                ]
+                
+                for asset in demo_assets:
+                    db.add(asset)
+                
+                db.commit()
+                print(f"[{datetime.now().isoformat()}] INFO: Database seeded successfully.")
+            else:
+                print(f"[{datetime.now().isoformat()}] INFO: Database already contains data ({user_count} users). Skipping seed.")
+                
+        except Exception as e:
+            print(f"[{datetime.now().isoformat()}] ERROR: Data operations failed: {e}")
+            db.rollback()
+        finally:
+            db.close()
             
     except Exception as e:
-        print(f"Error initializing database: {e}")
-        db.rollback()
-    finally:
-        db.close()
+        print(f"[{datetime.now().isoformat()}] ERROR: Critical database initialization failure: {e}")
+    
+    print(f"[{datetime.now().isoformat()}] INFO: Database initialization background task finished.")
