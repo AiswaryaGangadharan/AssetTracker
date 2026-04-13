@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.db.database import engine, Base, SessionLocal
 from app.models.domain import User, Asset, ActivityLog
+from app.core.security import get_password_hash
 from datetime import date
 import uuid
 
@@ -27,7 +28,7 @@ def init_db():
                     role="admin",
                     initials="AD",
                     department="IT Operations",
-                    password="admin123"
+                    password_hash=get_password_hash("admin123")
                 )
                 db.add(admin)
                 
@@ -38,7 +39,7 @@ def init_db():
                     role="employee",
                     initials="AS",
                     department="Engineering",
-                    password="employee123"
+                    password_hash=get_password_hash("employee123")
                 )
                 db.add(employee)
                 

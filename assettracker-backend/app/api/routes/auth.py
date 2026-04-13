@@ -6,7 +6,7 @@ from app.db.database import get_db
 from app.models.domain import User
 from app.api.deps import ROLE_PERMISSIONS, get_current_user
 from app.core.config import settings
-from app.core.security import create_access_token
+from app.core.security import create_access_token, get_password_hash, verify_password
 
 router = APIRouter()
 
@@ -20,7 +20,7 @@ async def register(request: RegisterRequest, db: Session = Depends(get_db)):
     user = User(
         email=request.email,
         name=request.name,
-        password=request.password,
+        password_hash=get_password_hash(request.password),
         role="employee",
         initials=initials,
         department=request.department
@@ -55,7 +55,7 @@ async def register(request: RegisterRequest, db: Session = Depends(get_db)):
 @router.post("/login", response_model=Token)
 async def login(request: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == request.email).first()
-    if not user or user.password != request.password:
+    if not user or not verify_password(request.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)

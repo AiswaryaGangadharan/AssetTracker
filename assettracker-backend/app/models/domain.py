@@ -12,7 +12,7 @@ class User(Base):
     role = Column(String, default="employee")
     initials = Column(String)
     department = Column(String, nullable=True)
-    password = Column(String)
+    password_hash = Column(String)
     
     assets = relationship("Asset", back_populates="assignee")
     requests = relationship("Request", back_populates="user")
