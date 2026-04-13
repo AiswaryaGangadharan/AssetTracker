@@ -9,3 +9,10 @@ class Token(BaseModel):
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+class RegisterRequest(BaseModel):
+    email: str
+    password: str
+    name: str
+    initials: Optional[str] = None
+    department: Optional[str] = None

@@ -1,11 +1,8 @@
 from sqlalchemy.orm import Session
 from app.db.database import engine, Base, SessionLocal
 from app.models.domain import User, Asset, ActivityLog
-from passlib.context import CryptContext
 from datetime import date
 import uuid
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def init_db():
     print(f"[{datetime.now().isoformat()}] INFO: Starting database initialization...")
@@ -30,7 +27,7 @@ def init_db():
                     role="admin",
                     initials="AD",
                     department="IT Operations",
-                    hashed_password=pwd_context.hash("admin123")
+                    password="admin123"
                 )
                 db.add(admin)
                 
@@ -41,7 +38,7 @@ def init_db():
                     role="employee",
                     initials="AS",
                     department="Engineering",
-                    hashed_password=pwd_context.hash("employee123")
+                    password="employee123"
                 )
                 db.add(employee)
                 
