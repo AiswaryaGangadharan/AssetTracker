@@ -7,6 +7,7 @@ from schemas.user import UserCreate, UserOut
 
 router = APIRouter()
 
+# bcrypt password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -14,6 +15,10 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+
+# -------------------------
+# REGISTER
+# -------------------------
 @router.post("/register", response_model=UserOut)
 def register(user: UserCreate, conn=Depends(get_db)):
     try:
@@ -25,13 +30,17 @@ def register(user: UserCreate, conn=Depends(get_db)):
             (user.username, user.email)
         )
         if cur.fetchone():
-            raise HTTPException(status_code=400, detail="Username or email already registered")
-
-        # 🔥 FIX: bcrypt password limit safety check
-        if len(user.password.encode("utf-8")) > 72:
             raise HTTPException(
                 status_code=400,
-                detail="Password too long. Max allowed is 72 bytes."
+                detail="Username or email already registered"
+            )
+
+        # FIX: bcrypt safe password limit check
+        password_bytes = user.password.encode("utf-8")
+        if len(password_bytes) > 72:
+            raise HTTPException(
+                status_code=400,
+                detail="Password too long (bcrypt supports max 72 bytes)"
             )
 
         # hash password
@@ -46,7 +55,7 @@ def register(user: UserCreate, conn=Depends(get_db)):
         user_id = cur.lastrowid
         conn.commit()
 
-        # return user
+        # return created user
         cur.execute(
             "SELECT id, username, email, role FROM users WHERE id = ?",
             (user_id,)
@@ -81,6 +90,7 @@ def login(credentials: LoginRequest, conn=Depends(get_db)):
         if not row:
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
+        # verify password
         if not pwd_context.verify(credentials.password, row["password_hash"]):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
