@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: assettracker-backend
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./assettracker-backend/Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        sync: false # User must set this manually in Render dashboard
