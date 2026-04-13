@@ -4,7 +4,6 @@ from sqlalchemy import func
 from app.db.database import get_db
 from app.models.domain import Asset, User
 from app.api.deps import get_current_user
-from app.db.mock_db import Role # Keep role enum for check
 
 router = APIRouter()
 
@@ -16,7 +15,7 @@ async def get_dashboard(
     user_role = current_user.get("role")
     user_id = current_user.get("id")
     
-    if user_role == Role.ADMIN:
+    if user_role == "admin":
         total = db.query(Asset).count()
         active = db.query(Asset).filter(Asset.status == "active").count()
         employees = db.query(Asset.assigned_to).distinct().filter(Asset.assigned_to.isnot(None)).count()

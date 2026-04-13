@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from app.db.database import engine, Base, SessionLocal
 from app.models.domain import User, Asset, ActivityLog
 from app.core.security import get_password_hash
-from datetime import date
+from datetime import date, datetime
 import uuid
 
 def init_db():
