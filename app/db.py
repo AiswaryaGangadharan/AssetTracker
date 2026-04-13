@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 DB_PATH = "asset_tracker.db"
 
@@ -12,10 +13,11 @@ def get_db():
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
-    with open('asset_tracker.sql', 'r') as f:
+
+    sql_path = os.path.join(os.path.dirname(__file__), "asset_tracker.sql")
+
+    with open(sql_path, 'r') as f:
         conn.executescript(f.read())
+
     conn.commit()
     conn.close()
-
-if __name__ == '__main__':
-    init_db()
