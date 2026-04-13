@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import auth
+from routers import auth
 from app.routers.employees import router as employees
 from app.routers.assets import router as assets
 from app.routers.assignments import router as assignments
