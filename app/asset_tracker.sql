@@ -1,43 +1,42 @@
--- asset_tracker.sql (copied to app/ for Docker)
--- Users table (added password_hash)
+-- SQLite compatible schema for app/
+PRAGMA foreign_keys = ON;
+
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE,
-    email VARCHAR(100) UNIQUE,
-    role VARCHAR(20),
-    password_hash TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    role TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Employees table
 CREATE TABLE IF NOT EXISTS employees (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    email VARCHAR(100),
-    department VARCHAR(50),
-    role VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    department TEXT,
+    role TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Assets table
 CREATE TABLE IF NOT EXISTS assets (
-    id SERIAL PRIMARY KEY,
-    asset_name VARCHAR(100),
-    asset_type VARCHAR(50),
-    asset_tag VARCHAR(50),
-    status VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    asset_name TEXT NOT NULL,
+    asset_type TEXT NOT NULL,
+    asset_tag TEXT,
+    status TEXT DEFAULT 'available',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Asset Assignments table
 CREATE TABLE IF NOT EXISTS asset_assignments (
-    id SERIAL PRIMARY KEY,
-    asset_id INT,
-    employee_id INT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    asset_id INTEGER,
+    employee_id INTEGER,
     assigned_date DATE,
-    returned_date DATE
+    returned_date DATE,
+    FOREIGN KEY (asset_id) REFERENCES assets(id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 
--- Indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);

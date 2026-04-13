@@ -5,7 +5,14 @@ from routers import assets_router as assets
 from routers import assignments_router as assignments
 from routers import dashboard_router as dashboard
 from routers import search_router as search
+from db import init_db
+
 app = FastAPI(title="Asset Tracker API")
+
+# Initialize DB on startup
+@app.on_event("startup")
+async def startup_event():
+    init_db()
 
 app.include_router(auth, prefix="/auth", tags=["Auth"])
 app.include_router(employees, prefix="/employees", tags=["Employees"])
