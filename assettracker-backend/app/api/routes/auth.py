@@ -1,26 +1,31 @@
 from fastapi import APIRouter, Depends, HTTPException
 from datetime import timedelta
 from app.schemas.auth import LoginRequest, Token
-from app.db.mock_db import USERS_DB, ROLE_PERMISSIONS, pwd_context
-from app.core.security import create_access_token
+from sqlalchemy.orm import Session
+from app.db.database import get_db
+from app.models.domain import User
+from app.api.deps import ROLE_PERMISSIONS, get_current_user
+from passlib.context import CryptContext
 from app.core.config import settings
-from app.api.deps import get_current_user
+from app.core.security import create_access_token
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 router = APIRouter()
 
 @router.post("/login", response_model=Token)
-async def login(request: LoginRequest):
-    user = USERS_DB.get(request.email)
-    if not user or not pwd_context.verify(request.password, user["password"]):
+async def login(request: LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == request.email).first()
+    if not user or not pwd_context.verify(request.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={
-            "sub": user["email"],
-            "id": user["id"],
-            "role": user["role"],
-            "permissions": ROLE_PERMISSIONS.get(user["role"], [])
+            "sub": user.email,
+            "id": user.id,
+            "role": user.role,
+            "permissions": ROLE_PERMISSIONS.get(user.role, [])
         },
         expires_delta=access_token_expires
     )
@@ -29,11 +34,11 @@ async def login(request: LoginRequest):
         "access_token": access_token,
         "token_type": "bearer",
         "user": {
-            "id": user["id"],
-            "email": user["email"],
-            "name": user["name"],
-            "role": user["role"],
-            "initials": user["initials"],
+            "id": user.id,
+            "email": user.email,
+            "name": user.name,
+            "role": user.role,
+            "initials": user.initials,
         }
     }
 

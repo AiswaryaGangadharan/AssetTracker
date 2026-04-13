@@ -6,10 +6,23 @@ from datetime import datetime
 from app.db.database import engine, Base
 from app.models import domain # Ensure models are imported to be registered with Base
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
+from contextlib import asynccontextmanager
+from app.db.init_db import init_db
 
-app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup logic: Initialize database and seed data
+    print("Starting up: Initializing database...")
+    init_db()
+    yield
+    # Shutdown logic (if any)
+    print("Shutting down...")
+
+app = FastAPI(
+    title=settings.PROJECT_NAME, 
+    version=settings.VERSION,
+    lifespan=lifespan
+)
 
 # CORS configuration
 app.add_middleware(

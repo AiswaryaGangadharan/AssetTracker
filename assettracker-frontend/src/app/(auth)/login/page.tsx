@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Shadcn UI Components
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,15 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  const { login: authLogin, user } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -66,9 +76,8 @@ export default function LoginPage() {
         throw new Error(data.detail || "Login failed");
       }
 
-      // Store token and user data
-      localStorage.setItem("token", data.access_token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      // Store token and user data via AuthContext
+      authLogin(data.access_token, data.user);
 
       setSuccess(true);
 
@@ -91,11 +100,12 @@ export default function LoginPage() {
       });
     } else {
       setCredentials({
-        email: "john@company.com",
+        email: "amit@company.com",
         password: "employee123",
       });
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
