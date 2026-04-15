@@ -1,3 +1,0 @@
-"""
-Asset Tracker App Package
-"""

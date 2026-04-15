@@ -1,26 +1,57 @@
 from fastapi import FastAPI
-from routers import auth_router as auth
-from routers import employees_router as employees
-from routers import assets_router as assets
-from routers import assignments_router as assignments
-from routers import dashboard_router as dashboard
-from routers import search_router as search
-from db import init_db
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.api import api_router
+from app.core.config import settings
+from datetime import datetime
+from app.db.database import engine, Base
+from app.models import domain # Ensure models are imported to be registered with Base
 
-app = FastAPI(title="Asset Tracker API")
+import asyncio
+from contextlib import asynccontextmanager
+from app.db.init_db import init_db
 
-# Initialize DB on startup
-@app.on_event("startup")
-async def startup_event():
-    init_db()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup logic: Initialize database and seed data in the background
+    print(f"[{datetime.now().isoformat()}] INFO: Application starting up. Scheduling background initialization...")
+    asyncio.create_task(asyncio.to_thread(init_db))
+    yield
+    # Shutdown logic (if any)
+    print(f"[{datetime.now().isoformat()}] INFO: Application shutting down.")
 
-app.include_router(auth, prefix="/auth", tags=["Auth"])
-app.include_router(employees, prefix="/employees", tags=["Employees"])
-app.include_router(assets, prefix="/assets", tags=["Assets"])
-app.include_router(assignments, prefix="/assignments", tags=["Assignments"])
-app.include_router(dashboard, prefix="/dashboard", tags=["Dashboard"])
-app.include_router(search, prefix="/search", tags=["Search"])
+app = FastAPI(
+    title=settings.PROJECT_NAME, 
+    version=settings.VERSION,
+    lifespan=lifespan
+)
+
+# CORS configuration — allows localhost (dev) and any Vercel domain (prod)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+        "https://*.onrender.com",
+    ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(api_router, prefix="/api")
 
 @app.get("/")
-def root():
-    return {"message": "API is working!"}
+async def root():
+    return {
+        "status": "running", 
+        "service": settings.PROJECT_NAME, 
+        "version": settings.VERSION,
+        "timestamp": datetime.utcnow()
+    }
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "timestamp": datetime.utcnow()}

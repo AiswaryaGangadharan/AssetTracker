@@ -84,9 +84,10 @@ export default function AssetsPage() {
     if (!user?.token) return;
     setLoading(true);
     try {
-      const assetsRes = await getAssets(user.token);
+      const assetsRes = await getAssets();
       setAssets(assetsRes.assets || []);
     } catch (error) {
+
       showToast('Failed to load assets', 'error');
     } finally {
       setLoading(false);

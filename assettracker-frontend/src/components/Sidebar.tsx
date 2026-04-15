@@ -19,8 +19,10 @@ import {
   X,
   Plus,
   Trash2,
-  Menu
+  Menu,
+  Wrench
 } from 'lucide-react';
+
 
 const ROLES = {
   ADMIN: 'admin',
@@ -56,8 +58,8 @@ export function Sidebar({ open, setOpen }: { open: boolean, setOpen: (open: bool
   const [stats, setStats] = useState<any>({});
 
   useEffect(() => {
-    if (user?.token) {
-      getDashboard(user.token).then(res => setStats(res.stats || {}));
+    if (user) {
+      getDashboard().then(res => setStats(res.stats || {}));
     }
   }, [user]);
 
@@ -70,8 +72,15 @@ export function Sidebar({ open, setOpen }: { open: boolean, setOpen: (open: bool
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/', permission: PERMISSIONS.VIEW_DASHBOARD },
     { id: 'assets', label: 'All Assets', icon: Package, path: '/assets', permission: PERMISSIONS.VIEW_ALL_ASSETS },
     { id: 'requests', label: 'Requests', icon: Clock, path: '/requests', permission: PERMISSIONS.VIEW_DASHBOARD },
-    { id: 'employees', label: 'Employees', icon: Users, path: '/employees', permission: PERMISSIONS.MANAGE_USERS },
-  ].filter(item => hasPermission(item.permission));
+    { id: 'issues', label: 'Issues / Reports', icon: Wrench, path: '/issues', permission: PERMISSIONS.MANAGE_USERS },
+    { id: 'employees', label: 'Employees', icon: Users, path: '/admin/employees', permission: PERMISSIONS.MANAGE_USERS },
+
+
+  ].filter(item => {
+      if (user?.role === 'employee' && (item.id === 'assets' || item.id === 'employees')) return false;
+      return hasPermission(item.permission);
+  });
+
 
   return (
     <>

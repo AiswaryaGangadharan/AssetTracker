@@ -13,6 +13,16 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     if (!loading) {
       if (!user && pathname !== "/login") {
         router.push("/login");
+        return;
+      }
+
+      // Role-based protection
+      if (user && (
+        (pathname.startsWith('/admin') && user.role !== 'admin') ||
+        (pathname.startsWith('/employee') && user.role !== 'employee')
+      )) {
+        const allowedPath = user.role === 'admin' ? '/admin' : '/employee';
+        router.push(allowedPath);
       }
     }
   }, [user, loading, router, pathname]);

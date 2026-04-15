@@ -31,9 +31,8 @@ export default function RequestsPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const fetchRequests = async () => {
-    if (!user?.token) return;
     try {
-      const res = await getRequests(user.token);
+      const res = await getRequests();
       setRequests(res.requests || []);
     } catch (error) {
       console.error("Failed to fetch requests", error);
@@ -49,18 +48,18 @@ export default function RequestsPage() {
   }, [user, authLoading]);
 
   const handleAction = async (id: string, action: 'approve' | 'reject') => {
-    if (!user?.token) return;
     try {
       if (action === 'approve') {
-        await approveRequest(user.token, id);
+        await approveRequest(id);
       } else {
-        await rejectRequest(user.token, id);
+        await rejectRequest(id);
       }
       fetchRequests();
     } catch (error) {
       console.error(`Failed to ${action} request`, error);
     }
   };
+
 
   const filteredRequests = requests.filter(req => 
     req.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||

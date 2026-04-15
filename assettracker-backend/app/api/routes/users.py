@@ -10,10 +10,10 @@ require_manage_users = require_permission(Permission.MANAGE_USERS)
 
 @router.get("")
 async def get_users(
-    current_user: dict = Depends(require_manage_users),
     db: Session = Depends(get_db)
 ):
-    users = db.query(User).all()
+    # Fetch all users with role 'employee' for the admin list
+    users = db.query(User).filter(User.role == "employee").all()
     return {
         "users": [
             {
@@ -27,6 +27,7 @@ async def get_users(
             } for u in users
         ]
     }
+
 
 @router.get("/me")
 async def get_me(current_user: dict = Depends(get_current_user)):

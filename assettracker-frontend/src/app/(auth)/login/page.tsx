@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
+import { loginUser } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Shadcn UI Components
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge"; 
+
+// Shadcn UI Components - additional
+import { Label } from "@/components/ui/label";
+import {
+  RadioGroup,
+  RadioGroupItem
+} from "@/components/ui/radio-group";
 
 // Icons
 import { 
@@ -34,12 +42,12 @@ interface LoginCredentials {
   password: string;
 }
 
+
 export default function LoginPage() {
   const router = useRouter();
-  const [credentials, setCredentials] = useState<LoginCredentials>({
-    email: "",
-    password: "",
-  });
+  const [credentials, setCredentials] = useState<LoginCredentials>({ email: "", password: "" });
+
+    // Role selector removed per requirements
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,12 +55,15 @@ export default function LoginPage() {
 
   const { login: authLogin, user } = useAuth();
 
-  // Redirect if already logged in
+  // Redirect if already logged in to role-specific dashboard
   useEffect(() => {
     if (user) {
-      router.push("/");
+      const dashboardPath = user.role === 'admin' ? '/admin' : '/employee';
+      router.push(dashboardPath);
     }
   }, [user, router]);
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,51 +72,18 @@ export default function LoginPage() {
     setSuccess(false);
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-      const response = await fetch(`${baseUrl}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || "Login failed");
-      }
-
-      // Store token and user data via AuthContext
+      const data = await loginUser(credentials);
       authLogin(data.access_token, data.user);
-
       setSuccess(true);
+      const dashboardPath = data.user.role === 'admin' ? '/admin' : '/employee';
+      router.push(dashboardPath);
 
-      // Redirect to dashboard after short delay
-      setTimeout(() => {
-        router.push("/");
-      }, 500);
     } catch (err: any) {
-      setError(err.message || "An error occurred during login");
+      setError(err.response?.data?.detail || err.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
-
-  const fillDemoCredentials = (role: "admin" | "employee") => {
-    if (role === "admin") {
-      setCredentials({
-        email: "admin@company.com",
-        password: "admin123",
-      });
-    } else {
-      setCredentials({
-        email: "amit@company.com",
-        password: "employee123",
-      });
-    }
-  };
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -215,6 +193,7 @@ export default function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
+
             </CardContent>
 
             <CardFooter className="flex flex-col space-y-4">
@@ -229,39 +208,11 @@ export default function LoginPage() {
                 )}
               </Button>
 
-              <div className="my-6 border-t" />
-
-              {/* Demo Credentials */}
-              <div className="space-y-2 w-full">
-                <p className="text-xs text-center text-muted-foreground">
-                  Demo Credentials (Click to fill)
-                </p>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 text-xs"
-                    onClick={() => fillDemoCredentials("admin")}
-                    disabled={loading}
-                  >
-                    <Badge variant="secondary" className="mr-2 text-xs">Admin</Badge>
-                    sneha@company.com
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 text-xs"
-                    onClick={() => fillDemoCredentials("employee")}
-                    disabled={loading}
-                  >
-                    <Badge variant="outline" className="mr-2 text-xs">Employee</Badge>
-                    amit@company.com
-                  </Button>
-                </div>
+              <div className="text-center text-sm text-muted-foreground">
+                Don't have an account? <Link href="/register" className="text-indigo-600 hover:text-indigo-500 font-medium dark:text-indigo-400">Register</Link>
               </div>
             </CardFooter>
+
           </form>
         </Card>
 

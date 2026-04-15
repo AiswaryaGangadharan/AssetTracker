@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.domain import Request, User
 from app.api.deps import get_current_user, require_permission
-from app.db.mock_db import Role, Permission # Keep for enums
+# Removed mock_db - use string roles/perms
 
 router = APIRouter()
 
-require_manage_users = require_permission(Permission.MANAGE_USERS) 
+require_manage_requests = require_permission("manage:requests") 
 
 @router.get("")
 async def get_requests(
@@ -17,12 +17,12 @@ async def get_requests(
     user_role = current_user.get("role")
     user_id = current_user.get("id")
     
-    if user_role == Role.ADMIN:
+    if user_role == 'admin':
         requests = db.query(Request).all()
     else:
         requests = db.query(Request).filter(Request.user_id == user_id).all()
     
-    return {"requests": requests}
+    return {"requests": [r.to_dict() for r in requests]}
 
 @router.post("")
 async def create_request(
@@ -34,19 +34,19 @@ async def create_request(
     new_req = Request(
         id=new_id,
         user_id=current_user["id"],
-        asset_type=payload.get("type"),
+        asset_type=payload.get("asset_type") or payload.get("type"),
         reason=payload.get("reason"),
         status="pending"
     )
     db.add(new_req)
     db.commit()
     db.refresh(new_req)
-    return {"request": new_req, "message": "Request submitted successfully"}
+    return {"request": new_req.to_dict(), "message": "Request submitted successfully"}
 
 @router.post("/{req_id}/approve")
 async def approve_request(
     req_id: str, 
-    current_user: dict = Depends(require_manage_users),
+    current_user: dict = Depends(require_manage_requests),
     db: Session = Depends(get_db)
 ):
     req = db.query(Request).filter(Request.id == req_id).first()
@@ -55,12 +55,12 @@ async def approve_request(
     
     req.status = "approved"
     db.commit()
-    return {"request": req, "message": "Request approved"}
+    return {"request": req.to_dict(), "message": "Request approved"}
 
 @router.post("/{req_id}/reject")
 async def reject_request(
     req_id: str, 
-    current_user: dict = Depends(require_manage_users),
+    current_user: dict = Depends(require_manage_requests),
     db: Session = Depends(get_db)
 ):
     req = db.query(Request).filter(Request.id == req_id).first()
@@ -69,4 +69,5 @@ async def reject_request(
     
     req.status = "rejected"
     db.commit()
-    return {"request": req, "message": "Request rejected"}
+    return {"request": req.to_dict(), "message": "Request rejected"}
+

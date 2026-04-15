@@ -5,6 +5,7 @@ from app.core.config import settings
 from app.db.database import get_db
 from sqlalchemy.orm import Session
 from app.models.domain import User
+from enum import Enum
 
 security = HTTPBearer()
 

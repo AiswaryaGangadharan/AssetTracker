@@ -1,14 +1,27 @@
-# AssetTracker Dashboard Bypass Plan
-## Status: Active
+# AssetTracker Deployment TODO
+Status: In Progress
 
-**Step 1: ✅ Backend fixed** (imports corrected)
+## Approved Plan Steps
 
-**Step 2: Bypass Login**
-- Edit `/app/page.tsx` → redirect to dashboard
-- Edit `/contexts/AuthContext.tsx` → auto-login mock Admin
+### 1. [ ] Ensure latest code pushed to GitHub
+   - `git add . && git commit -m "Prepare for deployment" && git push`
 
-**Step 3: Mock data in dashboard** (API fallback already exists)
+### 2. [x] Backend Deploy to Render (Docker)
+   - User: render.com → New → Web Service → Connect GitHub repo
+   - Root: /Users/aiswarya/AssetTracker, dockerfilePath: assettracker-backend/Dockerfile
+   - Env: DATABASE_URL (Supabase), SECRET_KEY=openssl rand -hex 32
+   - Get backend URL
 
-**Step 4:** Restart frontend (`cd assettracker-frontend && npm run dev`)
+### 3. [ ] Frontend Deploy to Vercel
+   - `cd assettracker-frontend`
+   - `vercel --prod`
+   - Set NEXT_PUBLIC_API_URL = [backend-url-from-step-2]
 
-**Step 5:** Direct access http://localhost:3000 → Admin Dashboard
+### 4. [ ] Test End-to-End LIVE
+   - Admin/Employee login
+   - CRUD: assets, requests, assignments, issues
+
+### 5. [ ] Fix issues if any (CORS/env)
+
+### 6. [ ] Complete ✅
+   - Provide URLs + confirmation
