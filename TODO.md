@@ -3,10 +3,10 @@ Status: In Progress
 
 ## Approved Plan Steps
 
-### 1. [ ] Ensure latest code pushed to GitHub
+### 1. [✅] Ensure latest code pushed to GitHub
    - `git add . && git commit -m "Prepare for deployment" && git push`
 
-### 2. [x] Backend Deploy to Render (Docker)
+### 2. [ ] Backend Deploy to Render (Docker)
    - User: render.com → New → Web Service → Connect GitHub repo
    - Root: /Users/aiswarya/AssetTracker, dockerfilePath: assettracker-backend/Dockerfile
    - Env: DATABASE_URL (Supabase), SECRET_KEY=openssl rand -hex 32

@@ -7,11 +7,12 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
-    # Database Configuration
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/postgres" # Default/Placeholder
-
+# Database Configuration
+    DATABASE_URL: str = "sqlite+aiosqlite:///./asset_tracker.db?_check_same_thread=False" # Local demo fallback
     
     class Config:
+        env_file = ".env"
+        case_sensitive = True
         env_file = ".env"
         case_sensitive = True
 
