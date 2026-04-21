@@ -42,7 +42,7 @@ async def get_current_user(
     return {
         "id": user.id,
         "email": user.email,
-        "name": user.username,
+        "name": user.name,
         "role": user.role,
         "initials": user.initials
     }

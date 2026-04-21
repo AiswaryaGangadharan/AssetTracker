@@ -1,6 +1,6 @@
 import api from './axios';
 
-async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
+async function fetchWithAuth(endpoint: string, options: any = {}) {
   try {
     const response = await api({
       url: endpoint,

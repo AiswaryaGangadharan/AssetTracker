@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
 # Database Configuration
-    DATABASE_URL: str = "sqlite+aiosqlite:///./asset_tracker.db?_check_same_thread=False" # Local demo fallback
+    DATABASE_URL: str = "sqlite:///./asset_tracker.db" # Local demo fallback
     
     class Config:
         env_file = ".env"

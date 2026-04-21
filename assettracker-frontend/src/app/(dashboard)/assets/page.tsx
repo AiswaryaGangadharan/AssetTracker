@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
+  createAsset,
   getAssets, 
   deleteAsset, 
   assignAsset, 
@@ -79,6 +80,8 @@ export default function AssetsPage() {
   const [assetHistory, setAssetHistory] = useState<any[]>([]);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState<string | null>(null);
+  const [addAssetOpen, setAddAssetOpen] = useState(false);
+  const [newAsset, setNewAsset] = useState({ name: '', type: 'Laptop' });
 
   const fetchData = async () => {
     if (!user?.token) return;
@@ -119,22 +122,35 @@ export default function AssetsPage() {
         setDeleteConfirmOpen(true);
         return;
       } else if (action === 'Confirm Delete') {
-        await deleteAsset(token, assetId);
+        await deleteAsset(assetId);
         showToast(`Asset deleted`);
         setDeleteConfirmOpen(false);
       } else if (action === 'View History') {
-        const historyRes = await getAssetActivity(token, assetId);
+        const historyRes = await getAssetActivity(assetId);
         setAssetHistory(historyRes.logs || []);
         setSelectedAssetForHistory(assetId);
         setHistoryDialogOpen(true);
         return;
       } else if (action === 'Revoke') {
-        await revokeAsset(token, assetId);
+        await revokeAsset(assetId);
         showToast('Asset status updated');
       }
       fetchData();
     } catch (error: any) {
       showToast(error.message || 'Operation failed', 'error');
+    }
+  };
+
+  const handleAddAsset = async () => {
+    if (!newAsset.name) return showToast('Name is required', 'error');
+    try {
+      await createAsset(newAsset);
+      showToast('Asset added successfully', 'success');
+      setAddAssetOpen(false);
+      setNewAsset({ name: '', type: 'Laptop' });
+      fetchData();
+    } catch (error: any) {
+      showToast(error.message || 'Failed to add asset', 'error');
     }
   };
 
@@ -167,7 +183,7 @@ export default function AssetsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Assets Management</h1>
           <p className="text-muted-foreground">Inventory of all company technological assets.</p>
         </div>
-        <Button className="gap-2" onClick={() => showToast('Feature coming soon: Add Asset Model')}>
+        <Button className="gap-2" onClick={() => setAddAssetOpen(true)}>
           <Plus className="w-4 h-4" /> Add Asset
         </Button>
       </header>
@@ -298,6 +314,34 @@ export default function AssetsPage() {
           <div className="flex justify-end gap-3 mt-4">
             <Button variant="ghost" onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
             <Button variant="destructive" onClick={() => handleAction('Confirm Delete', assetToDelete!)}>Delete</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Asset Dialog */}
+      <Dialog open={addAssetOpen} onOpenChange={setAddAssetOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Add New Asset</DialogTitle></DialogHeader>
+          <div className="space-y-4 my-4">
+            <div>
+              <label className="text-sm font-medium mb-1 block">Name</label>
+              <Input value={newAsset.name} onChange={e => setNewAsset({...newAsset, name: e.target.value})} placeholder="MacBook Pro" />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1 block">Type</label>
+              <select className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
+                value={newAsset.type} onChange={e => setNewAsset({...newAsset, type: e.target.value})}>
+                <option value="Laptop">Laptop</option>
+                <option value="Monitor">Monitor</option>
+                <option value="Keyboard">Keyboard</option>
+                <option value="Tablet">Tablet</option>
+                <option value="Printer">Printer</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 mt-4">
+            <Button variant="ghost" onClick={() => setAddAssetOpen(false)}>Cancel</Button>
+            <Button onClick={handleAddAsset}>Add Asset</Button>
           </div>
         </DialogContent>
       </Dialog>
