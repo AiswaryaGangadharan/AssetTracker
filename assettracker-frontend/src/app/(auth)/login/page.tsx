@@ -55,13 +55,8 @@ export default function LoginPage() {
 
   const { login: authLogin, user } = useAuth();
 
-  // Redirect if already logged in to role-specific dashboard
-  useEffect(() => {
-    if (user) {
-      const dashboardPath = user.role === 'admin' ? '/admin' : '/employee';
-      router.push(dashboardPath);
-    }
-  }, [user, router]);
+  // Direct login handling in handleSubmit for reliability.
+
 
 
 
@@ -73,14 +68,22 @@ export default function LoginPage() {
 
     try {
       const data = await loginUser(credentials);
+      
+      // Store credentials immediately for bypass
+      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
+      // Update context state
       authLogin(data.access_token, data.user);
+      
       setSuccess(true);
-      const dashboardPath = data.user.role === 'admin' ? '/admin' : '/employee';
-      router.push(dashboardPath);
+      setLoading(false);
 
+      // Redirect instantly
+      const path = data.user.role === 'admin' ? '/admin' : '/employee';
+      router.push(path);
     } catch (err: any) {
       setError(err.response?.data?.detail || err.message || "Login failed");
-    } finally {
       setLoading(false);
     }
   };

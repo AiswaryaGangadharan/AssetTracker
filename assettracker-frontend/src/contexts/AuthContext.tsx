@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const initAuth = async () => {
+    const initAuth = () => {
       const token = localStorage.getItem("token");
       const userStr = localStorage.getItem("user");
       

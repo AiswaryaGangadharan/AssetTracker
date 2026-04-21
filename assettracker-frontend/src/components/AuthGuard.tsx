@@ -10,22 +10,10 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!loading) {
-      if (!user && pathname !== "/login") {
-        router.push("/login");
-        return;
-      }
-
-      // Role-based protection
-      if (user && (
-        (pathname.startsWith('/admin') && user.role !== 'admin') ||
-        (pathname.startsWith('/employee') && user.role !== 'employee')
-      )) {
-        const allowedPath = user.role === 'admin' ? '/admin' : '/employee';
-        router.push(allowedPath);
-      }
+    if (!loading && !user && pathname !== "/login") {
+      router.push("/login");
     }
-  }, [user, loading, router, pathname]);
+  }, [user, loading, pathname, router]);
 
   if (loading) {
     return (
