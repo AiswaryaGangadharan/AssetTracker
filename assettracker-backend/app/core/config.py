@@ -7,13 +7,12 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
-# Database Configuration
-    DATABASE_URL: str = "sqlite:///./asset_tracker.db" # Local demo fallback
+# Database Configuration - Local SQLite first, override with .env
+    DATABASE_URL: str = "sqlite:///./asset_tracker.db"
     
     class Config:
         env_file = ".env"
         case_sensitive = True
-        env_file = ".env"
-        case_sensitive = True
 
 settings = Settings()
+

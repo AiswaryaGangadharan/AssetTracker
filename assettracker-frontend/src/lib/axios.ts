@@ -7,11 +7,16 @@ const getApiUrl = () => {
   // Normalization: Remove trailing slash
   url = url.replace(/\/$/, '');
   
+  if (typeof window !== 'undefined') {
+    console.log('Using API URL:', url);
+  }
+  
   return url;
 };
 
 const api = axios.create({
   baseURL: getApiUrl(),
+  timeout: 60000, // 60 seconds to handle Render cold starts
   headers: {
     'Content-Type': 'application/json',
   },

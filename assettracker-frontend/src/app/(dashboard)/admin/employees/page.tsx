@@ -15,6 +15,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { 
   Search, 
   Users, 
@@ -95,60 +103,75 @@ export default function AdminEmployeesPage() {
         />
       </div>
 
-      <div className="space-y-4">
+      <div className="bg-card rounded-xl border-2 shadow-sm overflow-hidden">
         {filteredEmployees.length === 0 ? (
-          <div className="text-center py-20 bg-muted/20 rounded-2xl border-2 border-dashed">
+          <div className="text-center py-20 bg-muted/20 rounded-2xl border-2 border-dashed m-4">
             <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-xl font-semibold">No employees found</h3>
             <p className="text-muted-foreground">Try adjusting your search criteria.</p>
           </div>
         ) : (
-          filteredEmployees.map((emp) => (
-            <Card key={emp.id} className="group overflow-hidden border-2 hover:border-indigo-500/50 transition-all duration-300 shadow-sm hover:shadow-md">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                  <div className="space-y-1">
-                    <h2 className="text-3xl font-black text-foreground group-hover:text-indigo-600 transition-colors uppercase tracking-tight">
-                      {emp.name}
-                    </h2>
-                    <div className="flex flex-wrap items-center gap-4 text-muted-foreground font-medium">
-                      <span className="flex items-center gap-1.5 bg-secondary/50 px-2 py-0.5 rounded text-sm">
-                        <Mail className="w-4 h-4" /> {emp.email}
-                      </span>
-                      <span className="flex items-center gap-1.5 bg-secondary/50 px-2 py-0.5 rounded text-sm capitalize">
-                        <Briefcase className="w-4 h-4" /> {emp.department}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-6">
-                    <div className="text-center md:text-right">
-                      <p className="text-xs uppercase font-bold text-muted-foreground tracking-widest mb-1">Assigned Assets</p>
-                      <div className="flex items-center justify-center md:justify-end gap-2">
-                        <span className="text-2xl font-black text-indigo-600">{emp.asset_count}</span>
-                        <Package className="w-5 h-5 text-indigo-500" />
+          <Table>
+            <TableHeader className="bg-muted/30">
+              <TableRow>
+                <TableHead className="font-bold py-4 pl-6">Member</TableHead>
+                <TableHead className="font-bold">Contact Info</TableHead>
+                <TableHead className="font-bold">Role & Dept</TableHead>
+                <TableHead className="font-bold text-center">Gear Count</TableHead>
+                <TableHead className="font-bold">Status</TableHead>
+                <TableHead className="font-bold text-right pr-6">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredEmployees.map((emp) => (
+                <TableRow key={emp.id} className="group transition-colors hover:bg-indigo-50/30">
+                  <TableCell className="py-4 pl-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border-2 border-white shadow-sm">
+                        {emp.initials || emp.name.charAt(0)}
                       </div>
+                      <span className="font-bold text-lg tracking-tight uppercase group-hover:text-indigo-600 transition-colors">
+                        {emp.name}
+                      </span>
                     </div>
-
-                    <div className="text-center md:text-right min-w-[100px]">
-                      <p className="text-xs uppercase font-bold text-muted-foreground tracking-widest mb-1">Status</p>
-                      <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/30 text-emerald-600 font-bold px-3 py-1">
-                        <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> {emp.status || 'Active'}
-                      </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 text-muted-foreground font-medium">
+                      <Mail className="w-4 h-4 text-indigo-400" />
+                      {emp.email}
                     </div>
-
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 text-muted-foreground font-medium capitalize">
+                      <Briefcase className="w-4 h-4 text-indigo-400" />
+                      {emp.department || 'General'}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <div className="inline-flex items-center gap-2 bg-indigo-50 px-3 py-1 rounded-full text-indigo-700 font-bold border border-indigo-100">
+                      <span>{emp.asset_count || 0}</span>
+                      <Package className="w-4 h-4" />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/30 text-emerald-600 font-bold px-3 py-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> {emp.status || 'Active'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right pr-6">
                     <Button 
                       variant="outline" 
-                      className="font-bold border-2 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all"
+                      size="sm"
+                      className="font-bold border-2 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all h-9"
                       onClick={() => router.push(`/?search=${emp.name}`)}
                     >
                       View Gear
                     </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </div>
     </div>

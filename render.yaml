@@ -7,3 +7,5 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false # User must set this manually in Render dashboard
+      - key: PORT
+        value: 10000

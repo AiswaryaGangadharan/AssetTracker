@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from app.db.database import engine, Base, SessionLocal
 from app.models.domain import User, Asset, ActivityLog
 from app.core.security import get_password_hash
@@ -6,13 +7,21 @@ from datetime import date, datetime
 import uuid
 
 def init_db():
-    print(f"[{datetime.now().isoformat()}] INFO: Starting database initialization...")
+    import traceback
+    print(f"[{datetime.now().isoformat()}] INFO: Starting SYNCHRONOUS database initialization...")
     
     try:
+        # Safe startup - skip DB if fails (app must start)
+        test_conn = engine.connect()
+        test_conn.execute(text("SELECT 1"))
+        test_conn.close()
+        print(f"[{datetime.now().isoformat()}] INFO: DB connection OK")
+        
         # Create tables if they don't exist
-        print(f"[{datetime.now().isoformat()}] INFO: Checking/Creating tables...")
         Base.metadata.create_all(bind=engine)
         print(f"[{datetime.now().isoformat()}] INFO: Tables verified.")
+    except Exception as e:
+        print(f"[{datetime.now().isoformat()}] WARN: DB init skipped: {e}")
         
         db = SessionLocal()
         try:

@@ -67,11 +67,16 @@ export default function IssuesPage() {
     }
   };
 
-  const filteredIssues = issues.filter(issue => 
-    issue.asset_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    issue.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    issue.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredIssues = issues.filter(issue => {
+    const assetName = issue.asset_name || "";
+    const userName = issue.user_name || "";
+    const description = issue.description || "";
+    const sQuery = searchQuery.toLowerCase();
+    
+    return assetName.toLowerCase().includes(sQuery) ||
+           userName.toLowerCase().includes(sQuery) ||
+           description.toLowerCase().includes(sQuery);
+  });
 
   if (authLoading || loading) {
     return (
