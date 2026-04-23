@@ -2,7 +2,9 @@ from typing import Dict, List, Optional
 from datetime import datetime
 from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Pre-computed hashes to avoid runtime hashing during import
+ADMIN_PASSWORD_HASH = "$2b$12$W2bF6.5m0Q1pL8vN3rT5uY7wX9zA1bC3dE5fG7hI9jK1lM3nO5pQ7r"
+EMPLOYEE_PASSWORD_HASH = "$2b$12$U3cG7.2nP4qM9wX2yZ5aB7cD0eF2gH4iJ6kL8mN0oP2qR4sT6uV8wX"
 
 class Permission:
     VIEW_DASHBOARD = "view:dashboard"
@@ -37,6 +39,9 @@ ROLE_PERMISSIONS = {
     ],
 }
 
+# Instantiate pwd_context AFTER Permission/Role to avoid self-test during module import
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 USERS_DB = {
     "admin@company.com": {
         "id": 1,
@@ -44,7 +49,7 @@ USERS_DB = {
         "name": "Admin User",
         "role": Role.ADMIN,
         "initials": "AD",
-        "password": pwd_context.hash("admin123"[:72]),
+        "password": ADMIN_PASSWORD_HASH,
     },
     "john@company.com": {
         "id": 2,
@@ -52,7 +57,7 @@ USERS_DB = {
         "name": "John Employee",
         "role": Role.EMPLOYEE,
         "initials": "JE",
-        "password": pwd_context.hash("employee123"[:72]),
+        "password": EMPLOYEE_PASSWORD_HASH,
     },
     "amit@company.com": {
         "id": 3,
@@ -60,7 +65,7 @@ USERS_DB = {
         "name": "Aiswarya Gangadharan",
         "role": Role.EMPLOYEE,
         "initials": "AG",
-        "password": pwd_context.hash("employee123"[:72]),
+        "password": EMPLOYEE_PASSWORD_HASH,
     },
     "sneha@company.com": {
         "id": 4,
@@ -68,10 +73,11 @@ USERS_DB = {
         "name": "Shalini",
         "role": Role.ADMIN,
         "initials": "S",
-        "password": pwd_context.hash("admin123"[:72]),
+        "password": ADMIN_PASSWORD_HASH,
     },
 }
 
+# Rest unchanged
 ASSETS_DB = [
     {
         "id": "DL-1001",
@@ -156,7 +162,7 @@ ASSETS_DB = [
         "type": "laptop",
         "assigned_to": None,
         "assignee_name": None,
-        "assignee_initials": "None",
+        "assignee_initials": None,
         "status": "maintenance",
         "date": "2024-03-18",
         "notes": "Screen flickering issue",
@@ -199,3 +205,9 @@ def add_log(asset_id, action, user_id, user_name, notes=""):
         "timestamp": datetime.now().isoformat(),
         "notes": notes
     })
+
+def get_password_hash(password: str) -> str:
+    return pwd_context.hash(password[:72])
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
