@@ -46,7 +46,7 @@ USERS_DB = {
         "name": "Admin User",
         "role": Role.ADMIN,
         "initials": "AD",
-        "password": pwd_context.hash("admin123"[:72]),
+"password": pwd_context.hash("admin123"),
     },
 "john@company.com": {
         "id": 2,
