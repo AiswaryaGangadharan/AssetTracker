@@ -2,7 +2,6 @@ from typing import Dict, List, Optional
 from datetime import datetime
 from passlib.context import CryptContext
 
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class Permission:
@@ -38,17 +37,16 @@ ROLE_PERMISSIONS = {
     ],
 }
 
-
 USERS_DB = {
-"admin@company.com": {
+    "admin@company.com": {
         "id": 1,
         "email": "admin@company.com",
         "name": "Admin User",
         "role": Role.ADMIN,
         "initials": "AD",
-"password": pwd_context.hash("admin123"),
+        "password": pwd_context.hash("admin123"[:72]),
     },
-"john@company.com": {
+    "john@company.com": {
         "id": 2,
         "email": "john@company.com",
         "name": "John Employee",
@@ -56,7 +54,7 @@ USERS_DB = {
         "initials": "JE",
         "password": pwd_context.hash("employee123"[:72]),
     },
-"amit@company.com": {
+    "amit@company.com": {
         "id": 3,
         "email": "amit@company.com",
         "name": "Aiswarya Gangadharan",
@@ -70,7 +68,7 @@ USERS_DB = {
         "name": "Shalini",
         "role": Role.ADMIN,
         "initials": "S",
-        "password": pwd_context.hash("admin123"),
+        "password": pwd_context.hash("admin123"[:72]),
     },
 }
 
@@ -158,13 +156,12 @@ ASSETS_DB = [
         "type": "laptop",
         "assigned_to": None,
         "assignee_name": None,
-        "assignee_initials": None,
+        "assignee_initials": "None",
         "status": "maintenance",
         "date": "2024-03-18",
         "notes": "Screen flickering issue",
     }
 ]
-
 
 REQUESTS_DB = [
     {
@@ -202,5 +199,3 @@ def add_log(asset_id, action, user_id, user_name, notes=""):
         "timestamp": datetime.now().isoformat(),
         "notes": notes
     })
-
-
