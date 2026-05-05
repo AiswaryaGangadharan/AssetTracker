@@ -14,7 +14,7 @@ ROLE_PERMISSIONS = {
     "admin": [
         "view:dashboard", "view:all_assets", "view:my_gear", 
         "manage:users", "delete:asset", "create:asset", 
-        "assign:asset", "revoke:asset"
+        "assign:asset", "revoke:asset", "manage:requests"
     ],
     "employee": [
         "view:dashboard", "view:my_gear", "request:asset"
@@ -50,6 +50,11 @@ async def get_current_user(
 def require_permission(required_permission: str):
     async def permission_checker(current_user: dict = Depends(get_current_user)):
         user_role = current_user.get("role")
+        
+        # ✅ Allow admin full access
+        if user_role == "admin":
+            return current_user
+
         if not user_role:
             raise HTTPException(status_code=403, detail="User has no role assigned")
         

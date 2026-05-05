@@ -30,11 +30,27 @@ async def create_request(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    asset_type = payload.get("asset_type") or payload.get("type")
+    user_id = current_user["id"]
+
+    # Check for existing pending or approved requests for the same asset type
+    existing_request = db.query(Request).filter(
+        Request.user_id == user_id,
+        Request.asset_type == asset_type,
+        Request.status.in_(["pending", "approved"])
+    ).first()
+
+    if existing_request:
+        raise HTTPException(
+            status_code=400, 
+            detail="You already have an active request for this asset."
+        )
+
     new_id = f"REQ-{db.query(Request).count() + 1:03d}"
     new_req = Request(
         id=new_id,
-        user_id=current_user["id"],
-        asset_type=payload.get("asset_type") or payload.get("type"),
+        user_id=user_id,
+        asset_type=asset_type,
         reason=payload.get("reason"),
         status="pending"
     )
