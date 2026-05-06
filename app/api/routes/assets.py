@@ -148,4 +148,26 @@ async def revoke_asset(
     db.refresh(asset)
     return {"asset": asset.to_dict(), "message": "Asset revoked successfully"}
 
-
+@router.delete("/{asset_id}")
+async def delete_asset(
+    asset_id: str,
+    current_user: dict = Depends(require_delete),
+    db: Session = Depends(get_db)
+):
+    # Try to find by string ID first (for custom IDs like AST-001)
+    asset = db.query(Asset).filter(Asset.id == asset_id).first()
+    
+    # If not found and the ID is numeric, try searching as an integer
+    if not asset and asset_id.isdigit():
+        asset = db.query(Asset).filter(Asset.id == int(asset_id)).first()
+        
+    if not asset:
+        raise HTTPException(status_code=404, detail=f"Asset with ID {asset_id} not found")
+    
+    # Optional: Delete related records first if not handled by DB cascades
+    # For now, let's just delete the asset and assume Base.metadata handled cascades 
+    # or rely on SQLAlchemy's session management.
+    db.delete(asset)
+    db.commit()
+    
+    return {"message": "Asset deleted successfully", "asset_id": asset_id}
