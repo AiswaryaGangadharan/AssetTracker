@@ -12,7 +12,14 @@ class IssueResponse(BaseModel):
     asset_id: str
     user_id: int
     description: str
+    normalized_description: Optional[str] = None
     severity: str
     status: str = "open"
     timestamp: datetime
+    asset_name: Optional[str] = "Unknown"
+    user_name: Optional[str] = "Unknown"
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
 

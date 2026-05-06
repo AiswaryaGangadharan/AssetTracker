@@ -13,15 +13,22 @@ async def get_issues(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    user_role = current_user.get("role")
-    user_id = current_user.get("id")
-    
-    if user_role == "admin":
-        issues = db.query(Issue).all()
-    else:
-        issues = db.query(Issue).filter(Issue.user_id == user_id).all()
-    
-    return {"issues": issues}
+    try:
+        user_role = current_user.get("role")
+        user_id = current_user.get("id")
+        
+        if user_role == "admin":
+            issues = db.query(Issue).all()
+        else:
+            issues = db.query(Issue).filter(Issue.user_id == user_id).all()
+        
+        # Use to_dict() for safe serialization of relationships and null handling
+        return {"issues": [issue.to_dict() for issue in issues]}
+    except Exception as e:
+        import traceback
+        print(f"❌ ISSUES ERROR: {str(e)}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 @router.post("")
 async def create_issue(
