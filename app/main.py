@@ -43,9 +43,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    # Allow local dev, temporary tunnels, and Vercel preview/prod frontend URLs.
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://[a-z0-9-]+\.ngrok-free\.app$|^https://[a-z0-9-]+\.trycloudflare\.com$|^https://[a-z0-9-]+\.vercel\.app$",
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
