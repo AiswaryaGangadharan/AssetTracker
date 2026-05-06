@@ -33,6 +33,20 @@ async def create_issue(
     asset = db.query(Asset).filter(Asset.id == payload.asset_id).first()
     if not asset:
         raise HTTPException(status_code=404, detail="Asset not found")
+
+    # Check for duplicate open/pending issues
+    existing_issue = db.query(Issue).filter(
+        Issue.user_id == current_user["id"],
+        Issue.asset_id == payload.asset_id,
+        Issue.description == payload.description,
+        Issue.status.in_(["open", "pending"])
+    ).first()
+
+    if existing_issue:
+        raise HTTPException(
+            status_code=400,
+            detail="This issue has already been reported for this asset and is currently being reviewed."
+        )
     
     new_id = f"ISSUE-{db.query(Issue).count() + 1:03d}"
     new_issue = Issue(
