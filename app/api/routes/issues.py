@@ -14,15 +14,18 @@ async def get_issues(
     db: Session = Depends(get_db)
 ):
     try:
+        from sqlalchemy.orm import joinedload
         user_role = current_user.get("role")
         user_id = current_user.get("id")
         
-        if user_role == "admin":
-            issues = db.query(Issue).all()
-        else:
-            issues = db.query(Issue).filter(Issue.user_id == user_id).all()
+        query = db.query(Issue).options(joinedload(Issue.asset), joinedload(Issue.user))
         
-        # Use to_dict() for safe serialization of relationships and null handling
+        if user_role == "admin":
+            issues = query.all()
+        else:
+            issues = query.filter(Issue.user_id == user_id).all()
+        
+        # Use to_dict() for safe serialization with null-safety already built in
         return {"issues": [issue.to_dict() for issue in issues]}
     except Exception as e:
         import traceback
