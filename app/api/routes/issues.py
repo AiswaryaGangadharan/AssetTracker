@@ -34,11 +34,14 @@ async def create_issue(
     if not asset:
         raise HTTPException(status_code=404, detail="Asset not found")
 
+    # Normalize description
+    normalized_description = payload.description.strip().lower()
+
     # Check for duplicate open/pending issues
     existing_issue = db.query(Issue).filter(
         Issue.user_id == current_user["id"],
         Issue.asset_id == payload.asset_id,
-        Issue.description == payload.description,
+        Issue.description == normalized_description,
         Issue.status.in_(["open", "pending"])
     ).first()
 
@@ -53,7 +56,7 @@ async def create_issue(
         id=new_id,
         asset_id=payload.asset_id,
         user_id=current_user["id"],
-        description=payload.description,
+        description=normalized_description,
         severity=payload.severity,
         status="open"
     )
