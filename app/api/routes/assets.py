@@ -18,18 +18,22 @@ require_request = require_permission("request:asset")
 
 @router.get("")
 async def get_assets(
+    user_id: int = None,
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     from sqlalchemy.orm import joinedload
     user_role = current_user.get("role")
-    user_id = current_user.get("id")
+    current_user_id = current_user.get("id")
     
     if user_role == 'admin':
-        assets = db.query(Asset).options(joinedload(Asset.assignee)).all()
+        query = db.query(Asset)
+        if user_id:
+            query = query.filter(Asset.assignee_id == user_id)
+        assets = query.options(joinedload(Asset.assignee)).all()
     else:
         # Employees only see their assigned assets
-        assets = db.query(Asset).filter(Asset.assignee_id == user_id).options(joinedload(Asset.assignee)).all()
+        assets = db.query(Asset).filter(Asset.assignee_id == current_user_id).options(joinedload(Asset.assignee)).all()
     
     return {"assets": [a.to_dict() for a in assets]}
 
