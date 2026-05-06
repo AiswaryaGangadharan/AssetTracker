@@ -135,6 +135,7 @@ class Issue(Base):
     asset_id = Column(Integer, ForeignKey("assets.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
     description = Column(Text)
+    normalized_description = Column(Text, index=True)
     severity = Column(String, default="medium")
     status = Column(String, default="open")
     timestamp = Column(DateTime, server_default=func.now())
@@ -148,6 +149,7 @@ class Issue(Base):
             "asset_id": self.asset_id,
             "user_id": self.user_id,
             "description": self.description,
+            "normalized_description": getattr(self, "normalized_description", self.description),
             "severity": self.severity,
             "status": self.status,
             "timestamp": self.timestamp,
