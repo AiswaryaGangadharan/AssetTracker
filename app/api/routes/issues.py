@@ -29,9 +29,10 @@ async def get_issues(
         return {"issues": [issue.to_dict() for issue in issues]}
     except Exception as e:
         import traceback
-        print(f"❌ ISSUES ERROR: {str(e)}")
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+        print("❌ ISSUES ERROR DETECTED:")
+        print(traceback.format_exc())
+        # Fail-safe: Return empty list instead of crashing with 500
+        return {"issues": [], "error": str(e)}
 
 @router.post("")
 async def create_issue(
